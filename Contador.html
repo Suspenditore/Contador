@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de 22h</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            font-size: 2em;
+            overflow: hidden;
+        }
+        #contador {
+            font-size: 4em;
+            font-weight: bold;
+            text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
+            animation: parpadeo 0.5s infinite alternate;
+        }
+        @keyframes parpadeo {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0.7; transform: scale(1.1); }
+        }
+        .fuego {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            background: url('https://media.tenor.com/GF6tnfhPi9IAAAAC/flames-fire.gif');
+            background-size: cover;
+            mix-blend-mode: screen;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div id="contador">00:00:00</div>
+    <div class="fuego"></div>
+    <script>
+        function obtenerTiempoRestante() {
+            let inicio = localStorage.getItem("inicio22h");
+            if (!inicio) {
+                inicio = Date.now();
+                localStorage.setItem("inicio22h", inicio);
+            }
+            const fin = parseInt(inicio) + (22 * 60 * 60 * 1000);
+            return fin - Date.now();
+        }
+
+        function actualizarContador() {
+            const tiempoRestante = obtenerTiempoRestante();
+            if (tiempoRestante <= 0) {
+                document.getElementById("contador").innerText = "¡SE ACABÓ!";
+                return;
+            }
+            const horas = Math.floor(tiempoRestante / (1000 * 60 * 60));
+            const minutos = Math.floor((tiempoRestante % (1000 * 60 * 60)) / (1000 * 60));
+            const segundos = Math.floor((tiempoRestante % (1000 * 60)) / 1000);
+            document.getElementById("contador").innerText = `${String(horas).padStart(2,'0')}:${String(minutos).padStart(2,'0')}:${String(segundos).padStart(2,'0')}`;
+            requestAnimationFrame(actualizarContador);
+        }
+
+        actualizarContador();
+    </script>
+</body>
+</html>
